@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
 import { deleteProduct, updateProduct, findProductInDb } from "@/lib/data";
-import {
-  fetchProductsFromSheet,
-  isSheetsConfigured,
-} from "@/lib/sheets";
 import { Product } from "@/lib/types";
 import { ensureSchema, isMySqlConfigured } from "@/lib/mysql";
 import { memoryProducts, updateMemoryProducts } from "../../store";
@@ -12,11 +8,6 @@ async function findProduct(id: string): Promise<Product | undefined> {
   if (isMySqlConfigured()) {
     await ensureSchema();
     return findProductInDb(id);
-  }
-
-  if (isSheetsConfigured()) {
-    const items = await fetchProductsFromSheet();
-    return items.find((p) => p.id === id);
   }
   return memoryProducts.find((p) => p.id === id);
 }
@@ -79,7 +70,7 @@ export async function PATCH(
   
   console.log("Saved product:", saved.name, "Stock after save:", saved.stock);
 
-  if (!isSheetsConfigured() && !isMySqlConfigured()) {
+  if (!isMySqlConfigured()) {
     updateMemoryProducts(memoryProducts.map((p) => (p.id === id ? saved : p)));
     console.log("Updated memory storage for product:", id);
   }
@@ -95,7 +86,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
 
-  if (!isSheetsConfigured() && !isMySqlConfigured()) {
+  if (!isMySqlConfigured()) {
     updateMemoryProducts(memoryProducts.filter((p) => p.id !== id));
     return NextResponse.json({ ok: true });
   }

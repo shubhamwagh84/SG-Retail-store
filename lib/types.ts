@@ -43,7 +43,7 @@ export type Sale = {
 
 export type Expense = {
   id: string;
-  type: "salary" | "operational_cost" | "stock_purchase" | "other";
+  type: "salary" | "operational_cost" | "stock_purchase" | "other" | "advertisement";
   amount: number;
   paymentMethod: "cash" | "bank";
   description?: string;
@@ -61,6 +61,5 @@ export type DayRevenue = {
 };
 
 export type PortalConfig = {
-  sheetsConfigured: boolean;
   storageConfigured: boolean;
 };

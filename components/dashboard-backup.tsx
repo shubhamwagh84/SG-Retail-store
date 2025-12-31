@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
-import { ArrowUpRight, Loader2, Plus, UtensilsCrossed } from "lucide-react";
+import { ArrowUpRight, Loader2, Plus, UtensilsCrossed, Trash2 } from "lucide-react";
 import { Product, Sale, PortalConfig, DayRevenue } from "@/lib/types";
 import clsx from "clsx";
 
 const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" });
+const lowStockLimit = 5;
 
 export function Dashboard({
   initialProducts,
@@ -19,7 +20,21 @@ export function Dashboard({
 }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [sales, setSales] = useState<Sale[]>(initialSales);
+  const [isAdding, setIsAdding] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    category: "Cookware",
+    size: "",
+    pattern: "",
+    company: "",
+    design: "",
+    avgStockNeeded: "",
+    costPrice: "",
+    price: "",
+    stock: "10",
+    photoUrl: "",
+  });
   const [saleForm, setSaleForm] = useState({ productId: products[0]?.id ?? "", qty: "1", amount: "0", paymentMethod: "cash" as const, note: "" });
   const [toast, setToast] = useState<string | null>(null);
 
@@ -158,7 +173,6 @@ export function Dashboard({
             </div>
           </div>
           <div className="flex items-center gap-3 text-xs">
-            <span className={clsx("px-3 py-1 rounded-full border", config.sheetsConfigured ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-amber-300 bg-amber-50 text-amber-700")}>Sheets {config.sheetsConfigured ? "linked" : "not linked"}</span>
             <span className={clsx("px-3 py-1 rounded-full border", config.storageConfigured ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-amber-300 bg-amber-50 text-amber-700")}>Images {config.storageConfigured ? "ready" : "not set"}</span>
             <a href="/products" className="px-3 py-1 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-slate-50">Products</a>
           </div>
@@ -279,7 +293,7 @@ export function Dashboard({
                 <button type="submit" disabled={isAdding} className="w-full flex items-center justify-center gap-2 rounded-md bg-amber-500 text-white font-semibold py-2 hover:bg-amber-600 disabled:opacity-60">
                   {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Save product
                 </button>
-                {!config.sheetsConfigured ? <p className="text-xs text-amber-700 bg-amber-100 border border-amber-300 rounded-md px-3 py-2">Google Sheets not linked yet. Data stays local until you add credentials.</p> : null}
+                <p className="text-xs text-slate-600 bg-slate-100 border border-slate-200 rounded-md px-3 py-2">Data writes go to MySQL. Configure DB vars to persist beyond runtime.</p>
               </form>
             </div>
 

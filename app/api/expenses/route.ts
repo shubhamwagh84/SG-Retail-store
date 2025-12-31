@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { Expense, Product } from "@/lib/types";
-import { fetchProductsFromSheet, isSheetsConfigured } from "@/lib/sheets";
 import { recordExpense, updateProduct, fetchExpensesFromDb, incrementProductStockInDb } from "@/lib/data";
 import { memoryProducts, updateMemoryProducts } from "../store";
 import { sampleExpenses } from "@/lib/sample";
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
         await incrementProductStockInDb(item.productId, qty);
       }
     } else {
-      const products: Product[] = isSheetsConfigured() ? await fetchProductsFromSheet() : memoryProducts;
+      const products: Product[] = memoryProducts;
       const updatedProducts: Product[] = [...products];
 
       for (const item of items) {
@@ -59,9 +58,7 @@ export async function POST(request: Request) {
         }
       }
 
-      if (!isSheetsConfigured()) {
-        updateMemoryProducts(updatedProducts);
-      }
+      updateMemoryProducts(updatedProducts);
     }
   }
 

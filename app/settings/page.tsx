@@ -1,6 +1,4 @@
 "use client";
-import clsx from "clsx";
-import { isSheetsConfigured } from "@/lib/sheets";
 import { useState } from "react";
 
 export default function SettingsPage() {
@@ -20,8 +18,6 @@ export default function SettingsPage() {
       setSeeding(false);
     }
   };
-  const sheetsReady = isSheetsConfigured();
-  const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || "";
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10 text-white">
@@ -30,37 +26,25 @@ export default function SettingsPage() {
 
       <div className="mt-6 space-y-6">
         <section className="bg-white/5 border border-white/10 rounded-xl p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold">Google Sheets</h2>
-              <p className="text-xs text-slate-300">Live data sync to your spreadsheet</p>
-            </div>
-            <span className={clsx("px-3 py-1 rounded-full border text-xs", sheetsReady ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-100" : "border-amber-400/50 bg-amber-400/10 text-amber-50")}>{sheetsReady ? "Ready" : "Not configured"}</span>
-          </div>
-          <div className="mt-4 text-sm space-y-2">
-            <p className="text-slate-200">Spreadsheet ID:</p>
-            <code className="block bg-black/40 border border-white/10 rounded-md px-3 py-2 text-slate-200 break-words">{spreadsheetId || "(not set)"}</code>
-            <div className="mt-3 text-slate-300">
-              <p className="mb-2">Required environment variables (in .env.local):</p>
-              <ul className="list-disc ml-6">
-                <li>GOOGLE_SERVICE_ACCOUNT_EMAIL</li>
-                <li>GOOGLE_PRIVATE_KEY</li>
-                <li>GOOGLE_SHEETS_SPREADSHEET_ID</li>
-              </ul>
-            </div>
-            <div className="mt-3 text-slate-300">
-              <p className="mb-2">Sheet tabs and columns:</p>
-              <p>Products: A-G → id, name, category, price, stock, photoUrl, updatedAt</p>
-              <p>Sales: A-G → id, productId, qty, amount, soldAt, note, user</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white/5 border border-white/10 rounded-xl p-5">
           <h2 className="text-base font-semibold">Authentication</h2>
           <p className="text-xs text-slate-300">Shared passcode access</p>
           <div className="mt-3 text-sm">
             <p>Set <span className="font-mono">PORTAL_PASSCODE</span> in <span className="font-mono">.env.local</span>.</p>
+          </div>
+        </section>
+
+        <section className="bg-white/5 border border-white/10 rounded-xl p-5">
+          <h2 className="text-base font-semibold">Database</h2>
+          <p className="text-xs text-slate-300">Runs on MySQL (PlanetScale recommended)</p>
+          <div className="mt-3 text-sm space-y-2 text-slate-200">
+            <p>Required environment variables:</p>
+            <ul className="list-disc ml-6 text-slate-200">
+              <li>DB_HOST</li>
+              <li>DB_PORT (default 3306)</li>
+              <li>DB_USER</li>
+              <li>DB_PASSWORD</li>
+              <li>DB_NAME</li>
+            </ul>
           </div>
         </section>
 

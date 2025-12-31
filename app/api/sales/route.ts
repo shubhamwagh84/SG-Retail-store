@@ -1,19 +1,13 @@
 import { NextResponse } from "next/server";
 import { fetchSalesFromDb, recordSale } from "@/lib/data";
-import { fetchSalesFromSheet, isSheetsConfigured } from "@/lib/sheets";
 import { memoryProducts, memorySales, updateMemoryProducts, updateMemorySales } from "../store";
-import { Sale, Product } from "@/lib/types";
+import { Sale } from "@/lib/types";
 import { ensureSchema, isMySqlConfigured } from "@/lib/mysql";
 
 export async function GET() {
   if (isMySqlConfigured()) {
     await ensureSchema();
     const sales = await fetchSalesFromDb();
-    return NextResponse.json(sales);
-  }
-
-  if (isSheetsConfigured()) {
-    const sales = await fetchSalesFromSheet();
     return NextResponse.json(sales);
   }
   return NextResponse.json(memorySales);
@@ -37,7 +31,7 @@ export async function POST(request: Request) {
     soldAt: soldAt || new Date().toISOString(),
   });
 
-  if (!isSheetsConfigured() && !isMySqlConfigured()) {
+  if (!isMySqlConfigured()) {
     updateMemorySales([sale, ...memorySales]);
     
     // Update in-memory product stock

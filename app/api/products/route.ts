@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
 import { fetchProductsFromDb, persistProduct } from "@/lib/data";
-import {
-  fetchProductsFromSheet,
-  isSheetsConfigured,
-} from "@/lib/sheets";
-import { Product } from "@/lib/types";
 import { ensureSchema, isMySqlConfigured } from "@/lib/mysql";
 import { memoryProducts, updateMemoryProducts } from "../store";
 
@@ -12,12 +7,6 @@ export async function GET() {
   if (isMySqlConfigured()) {
     await ensureSchema();
     const products = await fetchProductsFromDb();
-    return NextResponse.json(products);
-  }
-
-  if (isSheetsConfigured()) {
-    const products = await fetchProductsFromSheet();
-    console.log("GET /api/products - Returning from Sheets:", products.length, "products");
     return NextResponse.json(products);
   }
   console.log("GET /api/products - Returning from memory:", memoryProducts.length, "products");
@@ -51,7 +40,7 @@ export async function POST(request: Request) {
     photoUrl,
   });
 
-  if (!isSheetsConfigured() && !isMySqlConfigured()) {
+  if (!isMySqlConfigured()) {
     updateMemoryProducts([product, ...memoryProducts]);
   }
 

@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PUBLIC_PATHS = ["/login", "/manifest.webmanifest", "/sw.js"];
-const PUBLIC_FILE = /\.(.*)$/;
+const PUBLIC_FILE = /(.*)\.(.*)$/;
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isPublic =

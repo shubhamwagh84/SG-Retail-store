@@ -1,15 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { sampleProducts, sampleSales } from "./sample";
-import {
-  appendProductToSheet,
-  appendSaleToSheet,
-  clearProductRow,
-  fetchProductsFromSheet,
-  fetchSalesFromSheet,
-  isSheetsConfigured,
-  updateProductInSheet,
-} from "./sheets";
 import { getPool, ensureSchema, isMySqlConfigured } from "./mysql";
 import { Product, Sale, PortalConfig, Expense } from "./types";
 
@@ -20,7 +11,6 @@ function toMySqlDateTime(value: string | Date): string {
 }
 
 export async function loadPortalData() {
-  const sheetsConfigured = isSheetsConfigured();
   const mysqlConfigured = isMySqlConfigured();
   let products: Product[] = sampleProducts;
   let sales: Sale[] = sampleSales;
@@ -33,17 +23,9 @@ export async function loadPortalData() {
     } catch (error) {
       console.error("MySQL read failed, falling back", error);
     }
-  } else if (sheetsConfigured) {
-    try {
-      products = await fetchProductsFromSheet();
-      sales = await fetchSalesFromSheet();
-    } catch (error) {
-      console.error("Sheets read failed, using sample data", error);
-    }
   }
 
   const config: PortalConfig = {
-    sheetsConfigured,
     storageConfigured: !!process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   };
 
@@ -63,10 +45,6 @@ export async function persistProduct(product: Omit<Product, "id" | "updatedAt">)
     return item;
   }
 
-  if (isSheetsConfigured()) {
-    await appendProductToSheet(item);
-  }
-
   return item;
 }
 
@@ -80,9 +58,6 @@ export async function updateProduct(product: Product) {
     await updateProductInDb(updated);
     return updated;
   }
-  if (isSheetsConfigured()) {
-    await updateProductInSheet(updated);
-  }
   return updated;
 }
 
@@ -91,9 +66,6 @@ export async function deleteProduct(productId: string) {
     await ensureSchema();
     await deleteProductFromDb(productId);
     return;
-  }
-  if (isSheetsConfigured()) {
-    await clearProductRow(productId);
   }
 }
 
@@ -110,22 +82,6 @@ export async function recordSale(entry: Omit<Sale, "id"> & { soldAt?: string }) 
     return sale;
   }
 
-  if (isSheetsConfigured()) {
-    await appendSaleToSheet(sale);
-    try {
-      const products = await fetchProductsFromSheet();
-      const product = products.find((p) => p.id === sale.productId);
-      if (product) {
-        await updateProduct({
-          ...product,
-          stock: Math.max(0, product.stock - sale.qty),
-        });
-      }
-    } catch (error) {
-      console.error("Failed to update product stock after sale", error);
-    }
-  }
-
   return sale;
 }
 
@@ -139,8 +95,6 @@ export async function recordExpense(entry: Omit<Expense, "id">) {
     await ensureSchema();
     await insertExpenseToDb(expense);
   }
-
-  // Future: persist to Sheets if configured
   return expense;
 }
 

@@ -9,7 +9,7 @@ A beautiful, mobile-first web portal for managing your utensils shop inventory a
 - 📊 Real-time metrics (stock levels, low stock alerts, daily sales)
 - 🔐 Shared passcode authentication
 - 📱 Progressive Web App (PWA) - install on mobile/desktop
-- 🌐 Google Sheets integration (optional live sync)
+- 🗄️ MySQL persistence (PlanetScale-friendly)
 - 📸 Firebase Storage integration (optional image uploads)
 - 🎨 Beautiful gradient UI with Tailwind CSS
 
@@ -32,10 +32,10 @@ cp .env.example .env.local
 Edit `.env.local` and set:
 
 - `PORTAL_PASSCODE` - Your secure passcode (default: `demo123`)
+- `DB_HOST`, `DB_PORT` (default `3306`), `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 
 **Optional integrations:**
 
-- Google Sheets API credentials (for live data sync)
 - Firebase Storage config (for product image uploads)
 
 ### 3. Run Development Server
@@ -52,25 +52,6 @@ Open [http://localhost:3000](http://localhost:3000) and log in with your passcod
 npm run build
 npm start
 ```
-
-## Google Sheets Setup (Optional)
-
-1. Create a Google Cloud project
-2. Enable Google Sheets API
-3. Create a service account and download JSON key
-4. Share your spreadsheet with the service account email
-5. Add these to `.env.local`:
-   - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-   - `GOOGLE_PRIVATE_KEY`
-   - `GOOGLE_SHEETS_SPREADSHEET_ID`
-
-**Sheet structure:**
-
-**Products sheet** (columns A-G):
-| id | name | category | price | stock | photoUrl | updatedAt |
-
-**Sales sheet** (columns A-G):
-| id | productId | qty | amount | soldAt | note | user |
 
 ## Firebase Storage Setup (Optional)
 
@@ -94,7 +75,7 @@ On mobile browsers (Chrome/Safari), tap "Add to Home Screen" for native app-like
 - **Framework:** Next.js 16 (App Router)
 - **Styling:** Tailwind CSS 4
 - **Icons:** Lucide React
-- **Backend:** Google Sheets API
+- **Database:** MySQL (mysql2; PlanetScale recommended)
 - **Storage:** Firebase Storage
 - **Language:** TypeScript
 
