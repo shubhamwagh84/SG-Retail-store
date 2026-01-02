@@ -25,7 +25,7 @@ export default function LoginPage() {
             <UtensilsCrossed className="h-6 w-6 text-amber-700" />
           </div>
           <div>
-            <p className="text-sm text-slate-600">SG Retail store</p>
+            <p className="text-sm text-slate-600">SG Retail store (Target: 1 cr+ sales)</p>
               <h1 className="text-xl font-semibold text-slate-900">Sign in</h1>
           </div>
         </div>

@@ -622,7 +622,7 @@ export function Dashboard({
               <UtensilsCrossed className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-base font-semibold text-slate-900">SG Retail store</h1>
+              <h1 className="text-base font-semibold text-slate-900">SG Retail store (Target: 1 cr+ sales)</h1>
               <p className="text-xs text-slate-500">Daily Revenue & Sales</p>
             </div>
           </div>
