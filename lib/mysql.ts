@@ -28,7 +28,7 @@ export function getPool(): Pool {
     throw new Error("MySQL is not configured");
   }
   if (!pool) {
-    pool = mysql.createPool({
+    const poolConfig: any = {
       host: clean(process.env.DB_HOST),
       port: Number(process.env.DB_PORT || 3306),
       user: clean(process.env.DB_USER),
@@ -37,7 +37,16 @@ export function getPool(): Pool {
       waitForConnections: true,
       connectionLimit: 10,
       timezone: "Z",
-    });
+    };
+    
+    // Enable SSL for PlanetScale or remote databases
+    if (process.env.DB_HOST && process.env.DB_HOST.includes("psdb.cloud")) {
+      poolConfig.ssl = {
+        rejectUnauthorized: false,
+      };
+    }
+    
+    pool = mysql.createPool(poolConfig);
   }
   return pool;
 }
