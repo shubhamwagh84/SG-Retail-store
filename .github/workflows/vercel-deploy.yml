@@ -17,17 +17,14 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Install Vercel CLI
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --build-env DB_HOST="${{ secrets.DB_HOST }}" --build-env DB_PORT="${{ secrets.DB_PORT }}" --build-env DB_USER="${{ secrets.DB_USER }}" --build-env DB_PASSWORD="${{ secrets.DB_PASSWORD }}" --build-env DB_NAME="${{ secrets.DB_NAME }}" --build-env PORTAL_PASSCODE="${{ secrets.PORTAL_PASSCODE }}"
         env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          PORTAL_PASSCODE: ${{ secrets.PORTAL_PASSCODE }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
