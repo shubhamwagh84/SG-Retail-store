@@ -31,7 +31,7 @@ export function Dashboard({
   const [saleProductDropdownOpen, setSaleProductDropdownOpen] = useState(false);
   const [saleProductInitialized, setSaleProductInitialized] = useState(false);
   const [saleProductSearchDirty, setSaleProductSearchDirty] = useState(false);
-  const [expenseForm, setExpenseForm] = useState({ type: "salary" as "salary" | "operational_cost" | "other" | "advertisement", amount: "", paymentMethod: "cash" as "cash" | "bank", description: "", date: format(new Date(), "yyyy-MM-dd") });
+  const [expenseForm, setExpenseForm] = useState({ type: "salary" as "salary" | "operational_cost" | "other" | "advertisement" | "shop_rent", amount: "", paymentMethod: "cash" as "cash" | "bank", description: "", date: format(new Date(), "yyyy-MM-dd") });
   const [stockForm, setStockForm] = useState({ items: [] as Array<{ productId: string; qty: number }>, totalAmount: "", paymentMethod: "cash" as "cash" | "bank", description: "", date: format(new Date(), "yyyy-MM-dd"), tempProductId: products[0]?.id ?? "", tempQty: "" });
   const [toast, setToast] = useState<string | null>(null);
   const [selectedDayDetails, setSelectedDayDetails] = useState<null | {
@@ -109,7 +109,7 @@ export function Dashboard({
       const day = e.date;
       const entry = grouped.get(day) || { cash: 0, qr: 0, expenses: 0, stockPurchase: 0 };
       
-      if (e.type === "salary" || e.type === "operational_cost" || e.type === "other") {
+      if (e.type === "salary" || e.type === "operational_cost" || e.type === "other" || e.type === "shop_rent") {
         entry.expenses += e.amount;
       } else if (e.type === "stock_purchase") {
         entry.stockPurchase += e.amount;
@@ -138,8 +138,8 @@ export function Dashboard({
     // Treat missing paymentMethod as cash for legacy/sample data
     const totalCash = sales.filter(s => s.paymentMethod !== "qr_code").reduce((sum, s) => sum + s.amount, 0);
     const totalBank = sales.filter(s => s.paymentMethod === "qr_code").reduce((sum, s) => sum + s.amount, 0);
-    const totalExpenseCash = expenses.filter(e => e.paymentMethod === "cash" && (e.type === "salary" || e.type === "operational_cost" || e.type === "other")).reduce((sum, e) => sum + e.amount, 0);
-    const totalExpenseBank = expenses.filter(e => e.paymentMethod === "bank" && (e.type === "salary" || e.type === "operational_cost" || e.type === "other")).reduce((sum, e) => sum + e.amount, 0);
+    const totalExpenseCash = expenses.filter(e => e.paymentMethod === "cash" && (e.type === "salary" || e.type === "operational_cost" || e.type === "other" || e.type === "shop_rent")).reduce((sum, e) => sum + e.amount, 0);
+    const totalExpenseBank = expenses.filter(e => e.paymentMethod === "bank" && (e.type === "salary" || e.type === "operational_cost" || e.type === "other" || e.type === "shop_rent")).reduce((sum, e) => sum + e.amount, 0);
     const totalStockCash = expenses.filter(e => e.paymentMethod === "cash" && e.type === "stock_purchase").reduce((sum, e) => sum + e.amount, 0);
     const totalStockBank = expenses.filter(e => e.paymentMethod === "bank" && e.type === "stock_purchase").reduce((sum, e) => sum + e.amount, 0);
     const salaryCash = expenses.filter(e => e.paymentMethod === "cash" && e.type === "salary").reduce((sum, e) => sum + e.amount, 0);
@@ -172,7 +172,7 @@ export function Dashboard({
       .reduce((sum, e) => sum + e.amount, 0);
 
     const spentExpenseStockCents = inRangeExpenses
-      .filter((e) => e.type === "stock_purchase" || e.type === "salary" || e.type === "operational_cost" || e.type === "other")
+      .filter((e) => e.type === "stock_purchase" || e.type === "salary" || e.type === "operational_cost" || e.type === "other" || e.type === "shop_rent")
       .reduce((sum, e) => sum + e.amount, 0);
 
     return {
@@ -203,7 +203,7 @@ export function Dashboard({
       .reduce((sum, e) => sum + e.amount, 0);
 
     const spentExpStockCents = expensesUpToEnd
-      .filter((e) => e.type === "stock_purchase" || e.type === "salary" || e.type === "operational_cost" || e.type === "other")
+      .filter((e) => e.type === "stock_purchase" || e.type === "salary" || e.type === "operational_cost" || e.type === "other" || e.type === "shop_rent")
       .reduce((sum, e) => sum + e.amount, 0);
 
     return {
@@ -541,7 +541,7 @@ export function Dashboard({
       if (!res.ok) throw new Error("Failed to record expense");
       const expense: Expense = await res.json();
       setExpenses((e) => [expense, ...e]);
-      setExpenseForm({ type: "salary" as "salary" | "operational_cost" | "other" | "advertisement", amount: "", paymentMethod: "cash", description: "", date: format(new Date(), "yyyy-MM-dd") });
+      setExpenseForm({ type: "salary" as "salary" | "operational_cost" | "other" | "advertisement" | "shop_rent", amount: "", paymentMethod: "cash", description: "", date: format(new Date(), "yyyy-MM-dd") });
       showToast("Expense recorded");
     } catch (err) {
       console.error(err);
@@ -1029,9 +1029,10 @@ export function Dashboard({
               <form className="space-y-3" onSubmit={handleRecordExpense}>
                 <label className="block text-sm">
                   <span className="text-slate-700 font-medium">Type</span>
-                  <select value={expenseForm.type} onChange={(e) => setExpenseForm((f) => ({ ...f, type: e.target.value as "salary" | "operational_cost" | "other" | "advertisement" }))} className="mt-1 w-full rounded-md border border-slate-300 bg-slate-50 text-slate-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <select value={expenseForm.type} onChange={(e) => setExpenseForm((f) => ({ ...f, type: e.target.value as "salary" | "operational_cost" | "other" | "advertisement" | "shop_rent" }))} className="mt-1 w-full rounded-md border border-slate-300 bg-slate-50 text-slate-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500">
                     <option value="salary">Salary</option>
                     <option value="operational_cost">Operational Cost</option>
+                    <option value="shop_rent">Shop Rent</option>
                     <option value="advertisement">Advertisement</option>
                     <option value="other">Other</option>
                   </select>

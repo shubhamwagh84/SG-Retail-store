@@ -226,19 +226,19 @@ export default function ProductsListPage() {
               <Plus className="h-4 w-4" /> Add Product
             </button>
           </div>
-          <table className="min-w-full text-sm">
+          <table className="w-full table-auto text-sm">
             <thead>
               <tr className="bg-slate-50 text-slate-700">
-                <th className="px-4 py-2 text-left border-b">Product Name</th>
-                <th className="px-4 py-2 text-left border-b">Size</th>
-                <th className="px-4 py-2 text-left border-b">Pattern</th>
-                <th className="px-4 py-2 text-left border-b">Product Type</th>
-                <th className="px-4 py-2 text-left border-b">Design</th>
-                <th className="px-4 py-2 text-left border-b">Average Stock</th>
-                <th className="px-4 py-2 text-left border-b">Actual Stock in Shop</th>
-                <th className="px-4 py-2 text-left border-b">Purchased Price</th>
-                <th className="px-4 py-2 text-left border-b">Status</th>
-                <th className="px-4 py-2 text-center border-b">Actions</th>
+                <th className="px-3 py-2 text-left border-b w-[16%]">Product Name</th>
+                <th className="px-3 py-2 text-left border-b w-[10%]">Size</th>
+                <th className="px-3 py-2 text-left border-b w-[10%]">Pattern</th>
+                <th className="px-3 py-2 text-left border-b w-[11%]">Product Type</th>
+                <th className="px-3 py-2 text-left border-b w-[12%]">Design</th>
+                <th className="px-3 py-2 text-left border-b w-[9%]">Average Stock</th>
+                <th className="px-3 py-2 text-left border-b w-[11%]">Actual Stock in Shop</th>
+                <th className="px-3 py-2 text-left border-b w-[11%]">Purchased Price</th>
+                <th className="px-3 py-2 text-left border-b w-[8%]">Status</th>
+                <th className="px-3 py-2 text-center border-b w-[8%]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -251,21 +251,21 @@ export default function ProductsListPage() {
                 .map((p) => {
                 const isOutOfStock = p.avgStockNeeded !== undefined && p.stock < p.avgStockNeeded;
                 return (
-                  <tr key={p.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-2">
+                  <tr key={p.id} className="hover:bg-slate-50 align-top">
+                    <td className="px-3 py-2 whitespace-normal break-words">
                       <Link href={`/products/${p.id}`} className="text-slate-900 font-medium hover:text-amber-700 hover:underline">{p.name}</Link>
                     </td>
-                    <td className="px-4 py-2 text-slate-700">{p.size || "-"}</td>
-                    <td className="px-4 py-2 text-slate-700">{p.pattern || "-"}</td>
-                    <td className="px-4 py-2 text-slate-700">{p.productType || "-"}</td>
-                    <td className="px-4 py-2 text-slate-700">{p.design || "-"}</td>
-                    <td className="px-4 py-2 text-slate-700">{p.avgStockNeeded !== undefined ? String(p.avgStockNeeded) : "-"}</td>
-                    <td className="px-4 py-2 text-slate-900 font-medium">{p.stock}</td>
-                    <td className="px-4 py-2 text-slate-700">₹{Number(p.costPrice ?? 0).toFixed(2)}</td>
-                    <td className={`px-4 py-2 font-medium ${isOutOfStock ? "text-red-600" : "text-green-600"}`}>
+                    <td className="px-3 py-2 text-slate-700 whitespace-normal break-words">{p.size || "-"}</td>
+                    <td className="px-3 py-2 text-slate-700 whitespace-normal break-words">{p.pattern || "-"}</td>
+                    <td className="px-3 py-2 text-slate-700 whitespace-normal break-words">{p.productType || "-"}</td>
+                    <td className="px-3 py-2 text-slate-700 whitespace-normal break-words">{p.design || "-"}</td>
+                    <td className="px-3 py-2 text-slate-700">{p.avgStockNeeded !== undefined ? String(p.avgStockNeeded) : "-"}</td>
+                    <td className="px-3 py-2 text-slate-900 font-medium">{p.stock}</td>
+                    <td className="px-3 py-2 text-slate-700">₹{Number(p.costPrice ?? 0).toFixed(2)}</td>
+                    <td className={`px-3 py-2 font-medium ${isOutOfStock ? "text-red-600" : "text-green-600"}`}>
                       {isOutOfStock ? "Out of Stock" : "In Stock"}
                     </td>
-                    <td className="px-4 py-2 text-center">
+                    <td className="px-3 py-2 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Link href={`/products/${p.id}/edit`} className="text-xs px-3 py-1 rounded-md border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100">Edit</Link>
                         <button

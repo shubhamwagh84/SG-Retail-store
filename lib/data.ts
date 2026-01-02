@@ -1,6 +1,5 @@
 import { v4 as uuid } from "uuid";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { sampleProducts, sampleSales } from "./sample";
 import { getPool, ensureSchema, isMySqlConfigured } from "./mysql";
 import { Product, Sale, PortalConfig, Expense } from "./types";
 
@@ -12,8 +11,8 @@ function toMySqlDateTime(value: string | Date): string {
 
 export async function loadPortalData() {
   const mysqlConfigured = isMySqlConfigured();
-  let products: Product[] = sampleProducts;
-  let sales: Sale[] = sampleSales;
+  let products: Product[] = [];
+  let sales: Sale[] = [];
 
   if (mysqlConfigured) {
     try {

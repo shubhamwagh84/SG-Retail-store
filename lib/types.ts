@@ -43,7 +43,7 @@ export type Sale = {
 
 export type Expense = {
   id: string;
-  type: "salary" | "operational_cost" | "stock_purchase" | "other" | "advertisement";
+  type: "salary" | "operational_cost" | "stock_purchase" | "other" | "advertisement" | "shop_rent";
   amount: number;
   paymentMethod: "cash" | "bank";
   description?: string;
